@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Shows</title>
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Vetterocki Cinema</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                <div sec:authorize="hasAuthority('GUEST') or isAnonymous()">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/show/all">Now on the screens</a>
+                    </li>
+                </div>
+                <div sec:authorize="hasAuthority('GUEST') or isAnonymous()">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/account">Personal Account</a>
+                    </li>
+                </div>
+                <div sec:authorize="hasAuthority('ADMIN')">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/show/all">Manage shows</a>
+                    </li>
+                </div>
+                <div sec:authorize="hasAuthority('ADMIN')">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/ticket/all">Manage tickets</a>
+                    </li>
+                </div>
+            </ul>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <div sec:authorize="isAuthenticated()" >
+                    <li class="nav-item">
+                        <h6 class="nav-link" style="color: #f8f8f8">Welcome, <span sec:authentication="name"></span></h6>
+                    </li>
+
+                </div>
+                <div sec:authorize="isAuthenticated()" >
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout" style="color: #f8f8f8">Log out</a>
+                    </li>
+                </div>
+                <div sec:authorize="isAnonymous()">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login" style="color: #f8f8f8">Log in</a>
+                    </li>
+                </div>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<table class="table table-striped table-hover">
+    <tr>
+        <th style="text-align: center">Seat ID</th>
+        <th style="text-align: center">Movie Name</th>
+        <th style="text-align: center">Row</th>
+        <th style="text-align: center">Number</th>
+        <th style="text-align: center">Status</th>
+    </tr>
+    <tr th:each="seat : ${seats}">
+        <td><h6 style="text-align: center"><div><span th:text="${seat.id}"></span></div></h6></td>
+        <td><h6 style="text-align: center"><div><span th:text="${seat.show.movieName}"></span></div></h6></td>
+        <td><h6 style="text-align: center"><div><span th:text="${seat.rowNumber}"></span></div></h6></td>
+        <td><h6 style="text-align: center"><div><span th:text="${seat.number}"></span></div></h6></td>
+        <td style="text-align: center">
+            <span th:if="${seat.reserved == false}">
+                <a style="align-items: center" th:href="@{/ticket/book(showId=${show.id}, row=${seat.rowNumber},
+                    number=${seat.number})}" class="btn btn-success">Book this seat</a>
+            </span>
+            <h6 style="color: crimson; text-align: center"><span th:unless="${seat.reserved == false}">
+                <object style="text-align: center" class="btn btn-danger" >Reserved</object></span></h6>
+        </td>
+
+    </tr>
+</table>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+</script>
+
+</body>
+</html>
